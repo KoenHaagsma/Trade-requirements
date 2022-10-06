@@ -1,6 +1,8 @@
 import { Form, TextField, Submit } from '@redwoodjs/forms'
 import { useState } from 'react'
 import { MetaTags } from '@redwoodjs/web'
+
+import DailyStockCell from 'src/components/DailyStockCell'
 import StockCell from 'src/components/StockCell'
 
 const HomePage = () => {
@@ -29,6 +31,7 @@ const HomePage = () => {
         </Submit>
       </Form>
       {symbol && <StockCell symbol={symbol} />}
+      {symbol && <DailyStockCell symbol={symbol} />}
     </>
   )
 }
