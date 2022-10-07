@@ -3,6 +3,8 @@ import type {
   FindDailyStockQueryVariables,
 } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
+import { toast } from '@redwoodjs/web/toast'
+import { useEffect, useState } from 'react'
 
 export const QUERY = gql`
   query getDailyStockQuery($symbol: String!) {
@@ -18,30 +20,34 @@ export const QUERY = gql`
         close
         volume
       }
+      rsi
     }
   }
 `
 
-export const Loading = () => <div>Loading...</div>
+export const Loading = () => {
+  return <div>Loading...</div>
+}
 
 export const Empty = () => <div>Empty</div>
 
 export const Failure = ({
   error,
-}: CellFailureProps<FindDailyStockQueryVariables>) => (
-  <div style={{ color: 'red' }}>Error: {error?.message}</div>
-)
+}: CellFailureProps<FindDailyStockQueryVariables>) => {
+  useEffect(() => {
+    toast.error(error.message)
+  }, [])
+  return null
+}
 
 export const Success = ({
   dailyStock,
 }: CellSuccessProps<FindDailyStockQuery, FindDailyStockQueryVariables>) => {
   return (
-    <article className={'flex flex-col'}>
+    <article className={'flex flex-col bg-white drop-shadow-md'}>
       <h2>{dailyStock.symbol}</h2>
       <span>Last time refreshed: {dailyStock.lastRefreshed}</span>
-      {dailyStock.perDay.map((day) => (
-        <h1>{day.day}</h1>
-      ))}
+      <p>{dailyStock.rsi}</p>
     </article>
   )
 }

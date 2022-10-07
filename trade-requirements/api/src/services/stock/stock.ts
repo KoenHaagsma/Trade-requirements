@@ -11,7 +11,6 @@ export const getStock = async ({ symbol }: Params) => {
     `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${process.env.REDWOOD_ENV_AV_APIKEY}`
   )
   const json = await response.json()
-  console.log(json)
 
   if (isEmpty(json['Global Quote'])) {
     throw new UserInputError(`${symbol} isn't a valid symbol`)

@@ -13,6 +13,7 @@ export const schema = gql`
     lastRefreshed: String!
     timeZone: String!
     perDay: [Day]!
+    rsi: Float!
   }
 
   type Query {

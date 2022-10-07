@@ -1,6 +1,7 @@
 import { fetch } from 'cross-undici-fetch'
 import { isEmpty } from 'src/functions/isEmpty'
 import { UserInputError } from '@redwoodjs/graphql-server'
+import { RSI } from 'technicalindicators'
 
 type Params = {
   symbol: string
@@ -11,10 +12,17 @@ export const getDailyStock = async ({ symbol }: Params) => {
     `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${process.env.REDWOOD_ENV_AV_APIKEY}`
   )
   const json = await response.json()
+  console.log(json)
 
-  if (isEmpty(json['Meta Data']) || isEmpty(json['Time Series (Daily)'])) {
+  if (
+    ('Meta Data' in json && isEmpty(json['Meta Data'])) ||
+    ('Time Series (Daily)' in json && isEmpty(json['Time Series (Daily)'])) ||
+    'Error Message' in json
+  ) {
     throw new UserInputError(`${symbol} isn't a valid symbol`)
   }
+
+  const period = 14
 
   return {
     symbol,
@@ -30,5 +38,16 @@ export const getDailyStock = async ({ symbol }: Params) => {
         volume: day[1]['5. volume'],
       }
     }),
+    rsi: new RSI({
+      period: period,
+      values: Object.values(json['Time Series (Daily)'])
+        .reverse()
+        .map((day) => {
+          return parseFloat(parseFloat(day['4. close']).toFixed(2))
+        }),
+    }).getResult()[
+      Object.values(json['Time Series (Daily)']).length - period - 1
+    ],
+    reversedInput: false,
   }
 }
