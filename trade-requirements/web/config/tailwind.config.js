@@ -7,6 +7,7 @@ module.exports = {
         white: '#FFFFFF',
         darkWhite: '#F2F5FA',
         dark: '#191919',
+        darkDisabled: '1B1B1B',
       },
     },
   },

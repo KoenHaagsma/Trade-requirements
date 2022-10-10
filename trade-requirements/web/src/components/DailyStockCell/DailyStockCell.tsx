@@ -25,29 +25,46 @@ export const QUERY = gql`
   }
 `
 
-export const Loading = () => {
+export const Loading = (props) => {
+  useEffect(() => {
+    props.setButtonState(true)
+  }, [])
   return <div>Loading...</div>
 }
 
-export const Empty = () => <div>Empty</div>
-
-export const Failure = ({
-  error,
-}: CellFailureProps<FindDailyStockQueryVariables>) => {
+export const Empty = (props) => {
   useEffect(() => {
+    props.setButtonState(false)
+  }, [])
+  return <div>Empty</div>
+}
+
+interface FailureProps extends CellFailureProps<FindDailyStockQueryVariables> {
+  setButtonState: (state: boolean) => void
+}
+
+export const Failure = ({ error, setButtonState }: FailureProps) => {
+  useEffect(() => {
+    setButtonState(false)
     toast.error(error.message)
   }, [])
   return null
 }
 
-export const Success = ({
-  dailyStock,
-}: CellSuccessProps<FindDailyStockQuery, FindDailyStockQueryVariables>) => {
+interface SuccessProps
+  extends CellSuccessProps<FindDailyStockQuery, FindDailyStockQueryVariables> {
+  setButtonState: (state: boolean) => void
+}
+
+export const Success = ({ dailyStock, setButtonState }: SuccessProps) => {
+  useEffect(() => {
+    setButtonState(false)
+  }, [])
   return (
-    <article className={'flex flex-col bg-white drop-shadow-md'}>
-      <h2>{dailyStock.symbol}</h2>
-      <span>Last time refreshed: {dailyStock.lastRefreshed}</span>
-      <p>{dailyStock.rsi}</p>
+    <article className={'flex flex-col rounded bg-white p-2 drop-shadow-md'}>
+      <h2>Ticker: {dailyStock.symbol}</h2>
+      <span>Refreshed at: {dailyStock.lastRefreshed}</span>
+      <p>RSI: {dailyStock.rsi}</p>
     </article>
   )
 }
