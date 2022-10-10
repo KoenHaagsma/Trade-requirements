@@ -12,6 +12,7 @@ export const getDailyStock = async ({ symbol }: Params) => {
     `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${process.env.REDWOOD_ENV_AV_APIKEY}`
   )
   const json = await response.json()
+  console.log(json)
 
   if (
     ('Meta Data' in json && isEmpty(json['Meta Data'])) ||
@@ -19,6 +20,10 @@ export const getDailyStock = async ({ symbol }: Params) => {
     'Error Message' in json
   ) {
     throw new UserInputError(`${symbol} isn't a valid symbol`)
+  }
+
+  if ('Note' in json) {
+    throw new UserInputError(`Alpha vantage limit reached`)
   }
 
   const period = 14

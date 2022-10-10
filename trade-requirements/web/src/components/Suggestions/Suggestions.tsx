@@ -1,16 +1,21 @@
 type SuggestionsProps = {
   symbols: string[]
-  setFieldSymbol: (symbol: string) => void
+  setValue: (symbol: string) => void
 }
 
-const Suggestions = ({ symbols, setFieldSymbol }: SuggestionsProps) => {
+const Suggestions = ({ symbols, setValue }: SuggestionsProps) => {
   return (
-    <section>
-      <ul className={'mt-2 flex'}>
+    <section className={'mt-2'}>
+      {symbols.length > 0 && (
+        <span className={'text-slate-500'}>Suggested:</span>
+      )}
+      <ul className={'mt-1 -ml-1 flex'}>
         {symbols.map((symbol) => (
           <li
-            onClick={() => setFieldSymbol(symbol)}
-            className={'mx-1 text-slate-500'}
+            onClick={() => setValue(symbol)}
+            className={
+              'mx-1 cursor-pointer rounded-sm bg-white px-2 py-1 text-slate-600 drop-shadow hover:underline hover:drop-shadow-sm'
+            }
             key={symbol}
           >
             {symbol}
