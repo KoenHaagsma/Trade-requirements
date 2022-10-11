@@ -21,12 +21,12 @@ const WatchList = ({
       <h2 className={'mt-8 text-3xl font-bold'}>Watchlist</h2>
       {currentSymbol && (
         <span className={'text-slate-500'}>
-          Items in your watchlist: {currentSymbol.length}
+          Stocks in your watchlist: {currentSymbol.length}
         </span>
       )}
       <div
         className={
-          'mt-4 grid auto-rows-[1fr] grid-cols-[repeat(auto-fill,_24rem)] gap-4'
+          'mt-4 grid auto-rows-[1fr] grid-cols-[repeat(auto-fill,_20rem)] gap-4'
         }
       >
         {currentSymbol &&

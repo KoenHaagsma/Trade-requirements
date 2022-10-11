@@ -92,7 +92,7 @@ export const Success = ({
           : 'from-green-500'
       } py-2 px-6 drop-shadow-md`}
     >
-      <section>
+      <section className={'align-center flex flex-col'}>
         <h2>
           {fullName} - {dailyStock.symbol}
         </h2>

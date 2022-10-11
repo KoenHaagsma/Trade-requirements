@@ -25,7 +25,7 @@ const HomeLayout = ({ children }: HomeLayoutProps) => {
         <section className={'mt-16'}>Login section</section>
       </header>
 
-      <main className={'w-full bg-darkWhite p-4'}>
+      <main className={'w-full bg-darkWhite py-4 px-6'}>
         <Toaster
           toastOptions={{
             position: 'top-right',
