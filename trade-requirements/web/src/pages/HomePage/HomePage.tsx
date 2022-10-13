@@ -1,11 +1,34 @@
 import { useForm } from 'react-hook-form'
-import { useState } from 'react'
-import { MetaTags } from '@redwoodjs/web'
+import { useEffect, useState } from 'react'
+import { MetaTags, useMutation, useQuery } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
+import { useAuth } from '@redwoodjs/auth'
 
 import Suggestions from 'src/components/Suggestions/Suggestions'
 import TickerForm from 'src/components/TickerForm'
 import WatchList from 'src/components/WatchList'
+
+import {
+  CreateWatchListMutation,
+  CreateWatchListMutationVariables,
+} from 'types/graphql'
+
+const CREATE_WATCHLIST = gql`
+  mutation CreateWatchListMutation($input: CreateWatchListInput!) {
+    createWatchList(input: $input) {
+      id
+    }
+  }
+`
+
+export const WATCHLIST_QUERY = gql`
+  query watchList($id: String!) {
+    watchList: watchList(id: $id) {
+      id
+      email
+    }
+  }
+`
 
 type Stock = {
   symbol: string
@@ -22,9 +45,15 @@ type BestMatches = {
 
 const HomePage = () => {
   const formMethods = useForm()
+  const { isAuthenticated, userMetadata } = useAuth()
   const [currentSymbol, setCurrentSymbol] = useState<Stock[]>([])
   const [suggestionSymbols, setSuggestionSymbols] = useState<string[]>([])
   const [buttonState, setButtonState] = useState<boolean>(false)
+
+  const [create, { error }] = useMutation<
+    CreateWatchListMutation,
+    CreateWatchListMutationVariables
+  >(CREATE_WATCHLIST)
 
   const onSubmit = async ({ symbol }: OnSubmitProps) => {
     setButtonState(true)
@@ -51,7 +80,6 @@ const HomePage = () => {
       const symbolFound = symbols.bestMatches.find(
         (el: BestMatches) => el['1. symbol'] === symbol.toUpperCase()
       )
-      console.log(symbolFound)
 
       if (symbolFound !== undefined) {
         setCurrentSymbol((prevState) => [
@@ -87,19 +115,27 @@ const HomePage = () => {
   return (
     <>
       <MetaTags title="Home" description="Home page" />
-      <TickerForm
-        formMethods={formMethods}
-        onSubmit={onSubmit}
-        buttonState={buttonState}
-      />
-      {suggestionSymbols && (
-        <Suggestions symbols={suggestionSymbols} setValue={handleSetValue} />
+
+      {isAuthenticated && (
+        <>
+          <TickerForm
+            formMethods={formMethods}
+            onSubmit={onSubmit}
+            buttonState={buttonState}
+          />
+          {suggestionSymbols && (
+            <Suggestions
+              symbols={suggestionSymbols}
+              setValue={handleSetValue}
+            />
+          )}
+          <WatchList
+            currentSymbol={currentSymbol}
+            setButtonState={setButtonState}
+            setCurrentSymbol={setCurrentSymbol}
+          />
+        </>
       )}
-      <WatchList
-        currentSymbol={currentSymbol}
-        setButtonState={setButtonState}
-        setCurrentSymbol={setCurrentSymbol}
-      />
     </>
   )
 }

@@ -1,9 +1,23 @@
-datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
-}
-
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = "native"
+  binaryTargets = ["native"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("REDWOOD_ENV_DATABASE_URL")
+}
+
+model WatchList {
+  id      Int     @unique @default(autoincrement())
+  email   String  @id @unique
+  stocks  StockList[]
+}
+
+model StockList {
+  id          Int @id
+  fullName    String
+  ticker      String
+  WatchList   WatchList? @relation(fields: [watchlistId], references: [id])
+  watchlistId Int?
 }

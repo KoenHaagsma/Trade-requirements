@@ -1,5 +1,8 @@
+import { useAuth } from '@redwoodjs/auth'
 import { routes, Link } from '@redwoodjs/router'
 import { Toaster } from '@redwoodjs/web/toast'
+
+import UserAuthTools from 'src/components/UserAuthTools/UserAuthTools'
 
 type HomeLayoutProps = {
   children?: React.ReactNode
@@ -22,7 +25,9 @@ const HomeLayout = ({ children }: HomeLayoutProps) => {
             </li>
           </ul>
         </nav>
-        <section className={'mt-16'}>Login section</section>
+        <section className={'align-center mt-16 flex flex-col text-center'}>
+          <UserAuthTools />
+        </section>
       </header>
 
       <main className={'w-full bg-darkWhite py-4 px-6'}>
