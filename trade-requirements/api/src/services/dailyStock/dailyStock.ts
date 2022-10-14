@@ -12,7 +12,6 @@ export const getDailyStock = async ({ symbol }: Params) => {
     `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${process.env.REDWOOD_ENV_AV_APIKEY}`
   )
   const json = await response.json()
-  console.log(json)
 
   if (
     ('Meta Data' in json && isEmpty(json['Meta Data'])) ||

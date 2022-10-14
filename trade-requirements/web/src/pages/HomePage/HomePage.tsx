@@ -1,12 +1,34 @@
 import { useForm } from 'react-hook-form'
-import { useEffect, useState } from 'react'
-import { MetaTags } from '@redwoodjs/web'
+import { useState, useEffect } from 'react'
+import { MetaTags, useMutation } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
 import { useAuth } from '@redwoodjs/auth'
+import { useLazyQuery } from '@apollo/client'
 
 import Suggestions from 'src/components/Suggestions/Suggestions'
 import TickerForm from 'src/components/TickerForm'
 import WatchList from 'src/components/WatchList'
+
+import {
+  CreateWatchListMutation,
+  CreateWatchListMutationVariables,
+} from 'types/graphql'
+
+const CREATE_WATCHLIST = gql`
+  mutation CreateWatchListMutation($input: CreateWatchListInput!) {
+    createWatchList(input: $input) {
+      email
+    }
+  }
+`
+
+const QUERY = gql`
+  query watchListEmail($input: String!) {
+    watchlist: watchListEmail(email: $input) {
+      email
+    }
+  }
+`
 
 type Stock = {
   symbol: string
@@ -28,10 +50,45 @@ const HomePage = () => {
   const [suggestionSymbols, setSuggestionSymbols] = useState<string[]>([])
   const [buttonState, setButtonState] = useState<boolean>(false)
 
+  // TODO: Fetch watchlist once to check if user has a watchlist
+  // TODO: Add global state for watching if a user has a watchlist
+
+  const [create, { error: errorMutation }] = useMutation<
+    CreateWatchListMutation,
+    CreateWatchListMutationVariables
+  >(CREATE_WATCHLIST)
+  const [callQuery, { loading: lazyLoading, data, error }] = useLazyQuery(
+    QUERY,
+    {
+      variables: {
+        input: isAuthenticated ? String(userMetadata.name) : '',
+      },
+    }
+  )
+
+  // TODO: Check why this doesnt work
+  useEffect(() => {
+    toast.success('Watchlist useEffect')
+    if (isAuthenticated) {
+      callQuery().then((res) => {
+        if (res.data.watchlist === null) {
+          create({
+            variables: {
+              input: {
+                email: userMetadata.name,
+              },
+            },
+          })
+          toast.success('Watchlist created')
+        } else {
+          toast.error('Watchlist Already exists')
+        }
+      })
+    }
+  }, [isAuthenticated])
+
   const onSubmit = async ({ symbol }: OnSubmitProps) => {
     if (!isAuthenticated) return
-    // TODO: Add Watchlist to user
-    // TODO: Add Ticker to watchlist linked to user
     setButtonState(true)
 
     if (currentSymbol.find((el) => el.symbol === symbol) !== undefined) {
