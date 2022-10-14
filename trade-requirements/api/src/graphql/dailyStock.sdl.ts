@@ -17,6 +17,6 @@ export const schema = gql`
   }
 
   type Query {
-    getDailyStock(symbol: String!): dailyStock! @skipAuth
+    getDailyStock(symbol: String!): dailyStock! @requireAuth
   }
 `

@@ -8,6 +8,7 @@ export const schema = gql`
   type Query {
     watchLists: [WatchList!]! @requireAuth
     watchList(id: String!): WatchList @requireAuth
+    watchListEmail(email: String!): WatchList @skipAuth
   }
 
   input CreateWatchListInput {

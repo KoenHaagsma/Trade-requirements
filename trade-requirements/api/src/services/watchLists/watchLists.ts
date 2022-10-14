@@ -16,6 +16,12 @@ export const watchList: QueryResolvers['watchList'] = ({ id }) => {
   })
 }
 
+export const watchListEmail: QueryResolvers['watchListEmail'] = ({ email }) => {
+  return db.watchList.findUnique({
+    where: { email },
+  })
+}
+
 export const createWatchList: MutationResolvers['createWatchList'] = ({
   input,
 }) => {

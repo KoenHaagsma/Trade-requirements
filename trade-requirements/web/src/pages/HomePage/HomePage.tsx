@@ -1,34 +1,12 @@
 import { useForm } from 'react-hook-form'
 import { useEffect, useState } from 'react'
-import { MetaTags, useMutation, useQuery } from '@redwoodjs/web'
+import { MetaTags } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
 import { useAuth } from '@redwoodjs/auth'
 
 import Suggestions from 'src/components/Suggestions/Suggestions'
 import TickerForm from 'src/components/TickerForm'
 import WatchList from 'src/components/WatchList'
-
-import {
-  CreateWatchListMutation,
-  CreateWatchListMutationVariables,
-} from 'types/graphql'
-
-const CREATE_WATCHLIST = gql`
-  mutation CreateWatchListMutation($input: CreateWatchListInput!) {
-    createWatchList(input: $input) {
-      id
-    }
-  }
-`
-
-export const WATCHLIST_QUERY = gql`
-  query watchList($id: String!) {
-    watchList: watchList(id: $id) {
-      id
-      email
-    }
-  }
-`
 
 type Stock = {
   symbol: string
@@ -50,12 +28,10 @@ const HomePage = () => {
   const [suggestionSymbols, setSuggestionSymbols] = useState<string[]>([])
   const [buttonState, setButtonState] = useState<boolean>(false)
 
-  const [create, { error }] = useMutation<
-    CreateWatchListMutation,
-    CreateWatchListMutationVariables
-  >(CREATE_WATCHLIST)
-
   const onSubmit = async ({ symbol }: OnSubmitProps) => {
+    if (!isAuthenticated) return
+    // TODO: Add Watchlist to user
+    // TODO: Add Ticker to watchlist linked to user
     setButtonState(true)
 
     if (currentSymbol.find((el) => el.symbol === symbol) !== undefined) {

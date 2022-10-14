@@ -13,6 +13,6 @@ export const schema = gql`
   }
 
   type Query {
-    getStock(symbol: String!): Stock! @skipAuth
+    getStock(symbol: String!): Stock! @requireAuth
   }
 `
